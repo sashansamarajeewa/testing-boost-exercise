@@ -50,8 +50,5 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y cmake libyaml-cpp-dev libeigen3-dev libboost-test-dev cmake
       - name: run
-        run: |
-          cd build
-          chmod +x testsidemade
-          ./testsidemade
+        run: cd build; chmod +x testsidemade; ./testsidemade
 
