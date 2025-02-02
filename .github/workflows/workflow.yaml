@@ -1,0 +1,56 @@
+name: SSE Boost CI/CD
+on: push
+jobs:
+  style_check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: clang-format
+        run: sudo apt-get install -y clang-format
+      - name: Run clang-format
+        run: clang-format src/*.cpp src/*.hpp tests/*.cpp --dry-run -Werror
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake libyaml-cpp-dev libeigen3-dev libboost-test-dev cmake 
+      - name: build
+        run: |
+          mkdir build
+          cd build
+          cmake ..
+          make -j
+      - name: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: testsidemade_artifact
+          path: build/testsidemade
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: Create build directory
+        run: mkdir build
+      - name: download
+        uses: actions/download-artifact@v4
+        with:
+          name: testsidemade_artifact
+          path: build
+      - name: dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake libyaml-cpp-dev libeigen3-dev libboost-test-dev cmake
+      - name: run
+        run: |
+            chmod +x testsidemade
+            make test
+
