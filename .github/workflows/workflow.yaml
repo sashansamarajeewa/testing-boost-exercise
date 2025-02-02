@@ -51,6 +51,7 @@ jobs:
           sudo apt-get install -y cmake libyaml-cpp-dev libeigen3-dev libboost-test-dev cmake
       - name: run
         run: |
+            tar -xvf testsidemade_artifact.zip
             chmod +x testsidemade
             make test
 
